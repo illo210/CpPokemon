@@ -5,7 +5,7 @@
 ## Login   <rousse_3@epitech.net>
 ## 
 ## Started on  Thu Jun 11 20:46:47 2015 rousse_3
-## Last update Thu Jun 11 20:58:54 2015 rousse_3
+## Last update Thu Jun 11 21:10:53 2015 rousse_3
 ##
 
 CXX		=	g++
@@ -25,7 +25,7 @@ LDFLAGS		=
 
 NAME		=	Pokemon
 
-SRCS		=	srcs/main.cpp
+include			source.mk
 
 OBJS		=	$(SRCS:.cpp=.o)
 
