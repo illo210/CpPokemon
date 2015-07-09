@@ -5,7 +5,7 @@
 // Login   <rousse_3@epitech.net>
 // 
 // Started on  Thu Jun 11 21:08:12 2015 rousse_3
-// Last update Tue Jul  7 21:29:06 2015 rousse_3
+// Last update Thu Jul  9 16:46:56 2015 rousse_3
 //
 
 #ifndef					MAP_HPP_
@@ -24,10 +24,10 @@ public:
 
   Map					&operator=(const Map &copy);
 private:
-  bool					getSize(const std::string &buffer);
-  bool					readMap(std::istream &in);
-  bool					getLine(const std::string &str);
-  bool					checkLine(const std::string &str);
+  bool					getSize(const std::string &buffer, std::string &error);
+  bool					readMap(std::istream &in, std::string &error);
+  bool					getLine(const std::string &str, std::string &error);
+  bool					checkLine(const std::string &str, std::string &error);
 
   /*
   ** For debug

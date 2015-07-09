@@ -5,7 +5,7 @@
 // Login   <rousse_3@epitech.net>
 // 
 // Started on  Thu Jun 11 21:10:26 2015 rousse_3
-// Last update Tue Jul  7 21:40:47 2015 rousse_3
+// Last update Thu Jul  9 17:34:51 2015 rousse_3
 //
 
 #include	<fstream>
@@ -13,6 +13,7 @@
 #include	<iostream>
 #include	"Map.hpp"
 #include	"Parsing.hpp"
+#include	"Error.hpp"
 
 Map::Map(void) : _sizeX(0), _sizeY(0) {}
 
@@ -21,18 +22,19 @@ Map::Map(const std::string &filename)
   std::ifstream		in(filename.c_str());
 
   if (!in)
-    std::cerr << "Error: Cannot opening the file " << filename << std::endl;
+    throw ParsingError("Error: Cannot opening the file " + filename);
   else
     {
+      std::string	error = "";
       std::string	buffer = "";
 
       std::getline(in, buffer);
-      if (getSize(buffer) != true)
-	std::cerr << "Error: Cannot get the map size of the file " << filename << std::endl;
+      if (getSize(buffer, error) != true)
+	throw ParsingError(error + "Error: Cannot get the map size of the file " + filename);
       else
 	{
-	  if (readMap(in) != true)
-	    std::cerr << "Error: Cannot read the map data of the file " << filename << std::endl;
+	  if (readMap(in, error) != true)
+	    throw ParsingError(error + "Error: Cannot read the map data of the file " + filename);
 	  else
 	    {
 	      showMap();
@@ -54,42 +56,45 @@ Map		&Map::operator=(const Map &copy)
   return (*this);
 }
 
-bool		Map::getSize(const std::string &buffer)
+bool		Map::getSize(const std::string &buffer, std::string &error)
 {
   std::stringstream		ss(buffer);
 
   ss >> _sizeX >> _sizeY;
   if (ss.gcount() != 0)
     {
-      std::cerr << "Error: More characters than need in the size of the map" << std::endl;
+      error = "Error: More characters than need in the size of the map\n";
       return (false);
     }
   if (_sizeX <= 0 || _sizeY <= 0)
     {
-      std::cerr << "Error: Size of the map must be only positive" << std::endl;
+      error = "Error: Size of the map must be only positive\n";
       return (false);
     }
   return (true);
 }
 
-bool		Map::readMap(std::istream &in)
+bool		Map::readMap(std::istream &in, std::string &error)
 {
   std::string	buffer = "";
   bool		ret = true;
 
   std::getline(in, buffer);
-  while ((ret = getLine(buffer)) && in.eof() != true)
+  while ((ret = getLine(buffer, error)) && in.eof() != true)
     std::getline(in, buffer);
   if (ret == true && _map.size() != _sizeX)
     {
-      std::cerr << "Error: Map must have " << _sizeX << " line" << std::endl;
-      std::cerr << "       Instead there are " << _map.size() << " line" << std::endl;
+      std::stringstream		ss;
+
+      ss << "Error: Map must have " << _sizeX << " line" << std::endl;
+      ss << "       Instead there are " << _map.size() << " line" << std::endl;
+      ss >> error;
       ret = false;
     }
   return (ret);
 }
 
-bool			Map::checkLine(const std::string &str)
+bool			Map::checkLine(const std::string &str, std::string &error)
 {
   unsigned int		char_idx = 0;
   unsigned int		count_nb = 0;
@@ -101,7 +106,7 @@ bool			Map::checkLine(const std::string &str)
       count_nb++;
       if (isDigit(str[char_idx]) != true)
 	{
-	  std::cerr << "Error: Unexpected char in the map" << std::endl;
+	  error = "Error: Unexpected char in the map";
 	  return (false);
 	}
       while (isDigit(str[char_idx]))
@@ -109,20 +114,23 @@ bool			Map::checkLine(const std::string &str)
     }
   if (count_nb != _sizeY)
     {
-      std::cerr << "Error: Map must have " << _sizeY << " columns" << std::endl;
-      std::cerr << "       Instead there are " << count_nb << " columns" << std::endl;
+      std::stringstream		ss;
+
+      ss << "Error: Map must have " << _sizeY << " columns" << std::endl;
+      ss << "       Instead there are " << count_nb << " columns" << std::endl;
+      ss >> error;
       return (false);
     }
   return (true);
 }
 
-bool			Map::getLine(const std::string &str)
+bool			Map::getLine(const std::string &str, std::string &error)
 {
   int			ret = false;
 
   if (isLineEmpty(str) == true)
     return  (true);
-  if ((ret = checkLine(str)) == true)
+  if ((ret = checkLine(str, error)) == true)
     {
       std::stringstream	ss(str);
       int			nb;
