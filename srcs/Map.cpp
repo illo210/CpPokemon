@@ -5,7 +5,7 @@
 // Login   <rousse_3@epitech.net>
 // 
 // Started on  Thu Jun 11 21:10:26 2015 rousse_3
-// Last update Thu Jul  9 18:05:56 2015 rousse_3
+// Last update Fri Jul 10 01:54:39 2015 rousse_3
 //
 
 #include	<fstream>
@@ -15,7 +15,7 @@
 #include	"Parsing.hpp"
 #include	"Error.hpp"
 
-Map::Map(void) : _sizeX(0), _sizeY(0) {}
+Map::Map(void) : _sizeX(0), _sizeY(0), _map() {}
 
 Map::Map(const std::string &filename)
 {
@@ -47,13 +47,49 @@ Map::Map(const Map &copy) :
   _sizeX(copy._sizeX),
   _sizeY(copy._sizeY)
 {
+  std::vector<line>::const_iterator	itLine = copy._map.begin();
+  std::vector<line>::const_iterator	endLine = copy._map.end();
+
+  while (itLine != endLine)
+    {
+      std::vector<int>::const_iterator	itRow = (*itLine).begin();
+      std::vector<int>::const_iterator	endRow = (*itLine).end();      
+      std::vector<int>			newLine;
+
+      while (itRow != endRow)
+	{
+	  newLine.push_back(*itRow);
+	  ++itRow;
+	}
+      _map.push_back(newLine);
+      ++itLine;
+    }
 }
 
 Map::~Map(void) throw() {}
 
 Map		&Map::operator=(const Map &copy)
 {
-  (void) copy;
+
+  std::vector<line>::const_iterator	itLine = copy._map.begin();
+  std::vector<line>::const_iterator	endLine = copy._map.end();
+
+  _sizeX = copy._sizeX;
+  _sizeY = copy._sizeY;
+  while (itLine != endLine)
+    {
+      std::vector<int>::const_iterator	itRow = (*itLine).begin();
+      std::vector<int>::const_iterator	endRow = (*itLine).end();      
+      std::vector<int>			newLine;
+
+      while (itRow != endRow)
+	{
+	  newLine.push_back(*itRow);
+	  ++itRow;
+	}
+      _map.push_back(newLine);
+      ++itLine;
+    }
   return (*this);
 }
 
