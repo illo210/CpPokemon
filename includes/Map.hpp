@@ -5,7 +5,7 @@
 // Login   <rousse_3@epitech.net>
 // 
 // Started on  Thu Jun 11 21:08:12 2015 rousse_3
-// Last update Thu Jul  9 16:46:56 2015 rousse_3
+// Last update Thu Jul  9 18:01:43 2015 rousse_3
 //
 
 #ifndef					MAP_HPP_
@@ -33,12 +33,11 @@ private:
   ** For debug
   */
   void					showMap(void) const;
-
-  unsigned int				_sizeX;
-  unsigned int				_sizeY;
   
   typedef	std::vector<int>	line;
 	
+  unsigned int				_sizeX;
+  unsigned int				_sizeY;
   std::vector<line>			_map;
 };
 

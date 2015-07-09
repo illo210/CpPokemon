@@ -5,7 +5,7 @@
 // Login   <rousse_3@epitech.net>
 // 
 // Started on  Thu Jun 11 21:10:26 2015 rousse_3
-// Last update Thu Jul  9 17:34:51 2015 rousse_3
+// Last update Thu Jul  9 18:05:56 2015 rousse_3
 //
 
 #include	<fstream>
@@ -43,9 +43,10 @@ Map::Map(const std::string &filename)
     }
 }
 
-Map::Map(const Map &copy)
+Map::Map(const Map &copy) :
+  _sizeX(copy._sizeX),
+  _sizeY(copy._sizeY)
 {
-  (void) copy;
 }
 
 Map::~Map(void) throw() {}
@@ -96,28 +97,28 @@ bool		Map::readMap(std::istream &in, std::string &error)
 
 bool			Map::checkLine(const std::string &str, std::string &error)
 {
-  unsigned int		char_idx = 0;
-  unsigned int		count_nb = 0;
+  unsigned int		charIdx = 0;
+  unsigned int		countNb = 0;
 
-  while (str[char_idx] != '\0')
+  while (str[charIdx] != '\0')
     {
-      while (isBlank(str[char_idx]))
-	char_idx++;
-      count_nb++;
-      if (isDigit(str[char_idx]) != true)
+      while (isBlank(str[charIdx]))
+	charIdx++;
+      countNb++;
+      if (isDigit(str[charIdx]) != true)
 	{
 	  error = "Error: Unexpected char in the map";
 	  return (false);
 	}
-      while (isDigit(str[char_idx]))
-	char_idx++;
+      while (isDigit(str[charIdx]))
+	charIdx++;
     }
-  if (count_nb != _sizeY)
+  if (countNb != _sizeY)
     {
       std::stringstream		ss;
 
       ss << "Error: Map must have " << _sizeY << " columns" << std::endl;
-      ss << "       Instead there are " << count_nb << " columns" << std::endl;
+      ss << "       Instead there are " << countNb << " columns" << std::endl;
       ss >> error;
       return (false);
     }
@@ -135,13 +136,13 @@ bool			Map::getLine(const std::string &str, std::string &error)
       std::stringstream	ss(str);
       int			nb;
       std::vector<int>	line;
-      unsigned int		count_nb = _sizeY;
+      unsigned int		countNb = _sizeY;
       
-      while (count_nb > 0)
+      while (countNb > 0)
 	{
 	  ss >> nb;
 	  line.push_back(nb);
-	  count_nb--;
+	  countNb--;
 	}
       _map.push_back(line);
     }
@@ -150,23 +151,23 @@ bool			Map::getLine(const std::string &str, std::string &error)
 
 void					Map::showMap(void) const
 {
-  std::vector<line>::const_iterator	map_it = _map.begin();
-  std::vector<line>::const_iterator	map_end = _map.end();
+  std::vector<line>::const_iterator	mapIt = _map.begin();
+  std::vector<line>::const_iterator	mapEnd = _map.end();
 
-  while (map_it != map_end)
+  while (mapIt != mapEnd)
     {
-      bool					begin = true;
-      std::vector<int>::const_iterator	line_it = (*map_it).begin();
-      std::vector<int>::const_iterator	line_end = (*map_it).end();
-      while (line_it != line_end)
+      bool				begin = true;
+      std::vector<int>::const_iterator	lineIt = (*mapIt).begin();
+      std::vector<int>::const_iterator	lineEnd = (*mapIt).end();
+      while (lineIt != lineEnd)
 	{
 	  if (begin != true)
 	    std::cout << " ";
-	  std::cout << *line_it;
+	  std::cout << *lineIt;
 	  begin = false;
-	  ++line_it;
+	  ++lineIt;
 	}
       std::cout << std::endl;
-      ++map_it;
+      ++mapIt;
     }
 }
