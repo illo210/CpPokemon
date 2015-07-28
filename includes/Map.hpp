@@ -25,9 +25,6 @@ public:
   Map					&operator=(const Map &copy);
 private:
   bool					getSize(const std::string &buffer, std::string &error);
-  bool					readMap(std::istream &in, std::string &error);
-  bool					getLine(const std::string &str, std::string &error);
-  bool					checkLine(const std::string &str, std::string &error);
 
   /*
   ** For debug

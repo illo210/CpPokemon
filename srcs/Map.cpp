@@ -15,6 +15,81 @@
 #include	"Parsing.hpp"
 #include	"Error.hpp"
 
+
+static bool		checkLine(const std::string &str, unsigned int sizeY, std::string &error)
+{
+  unsigned int		charIdx = 0;
+  unsigned int		countNb = 0;
+
+  while (str[charIdx] != '\0')
+    {
+      while (isBlank(str[charIdx]))
+	charIdx++;
+      countNb++;
+      if (isDigit(str[charIdx]) != true)
+	{
+	  error = "Error: Unexpected char in the map";
+	  return (false);
+	}
+      while (isDigit(str[charIdx]))
+	charIdx++;
+    }
+  if (countNb != sizeY)
+    {
+      std::stringstream		ss;
+
+      ss << "Error: Map must have " << sizeY << " columns" << std::endl;
+      ss << "       Instead there are " << countNb << " columns" << std::endl;
+      error = ss.str();
+      return (false);
+    }
+  return (true);
+}
+
+static bool		getLine(const std::string &str, unsigned int sizeY, std::vector<std::vector<int> > &map, std::string &error)
+{
+  int			ret = false;
+
+  if (isLineEmpty(str) == true)
+    return  (true);
+  if ((ret = checkLine(str, sizeY, error)) == true)
+    {
+      std::stringstream	ss(str);
+      int			nb;
+      std::vector<int>	line;
+      unsigned int		countNb = sizeY;
+      
+      while (countNb > 0)
+	{
+	  ss >> nb;
+	  line.push_back(nb);
+	  countNb--;
+	}
+      map.push_back(line);
+    }
+  return (ret);
+}
+
+static bool		readMap(std::istream &in, unsigned int sizeX, unsigned int sizeY, std::vector<std::vector<int> > &map, std::string &error)
+{
+  std::string	buffer = "";
+  bool		ret = true;
+
+  std::getline(in, buffer);
+  while ((ret = getLine(buffer, sizeY, map, error)) && in.eof() != true)
+    std::getline(in, buffer);
+  if (ret == true && map.size() != sizeX)
+    {
+      std::stringstream		ss;
+
+      ss << "Error: Map must have " << sizeX << " line" << std::endl;
+      ss << "       Instead there are " << map.size() << " line" << std::endl;
+      error = ss.str();
+      ret = false;
+    }
+  return (ret);
+}
+
 Map::Map(void) : _sizeX(0), _sizeY(0), _map() {}
 
 Map::Map(const std::string &filename)
@@ -33,7 +108,7 @@ Map::Map(const std::string &filename)
 	throw ParsingError(error + "Error: Cannot get the map size of the file " + filename);
       else
 	{
-	  if (readMap(in, error) != true)
+	  if (readMap(in, _sizeX, _sizeY, _map, error) != true)
 	    throw ParsingError(error + "Error: Cannot read the map data of the file " + filename);
 	  else
 	    {
@@ -109,80 +184,6 @@ bool		Map::getSize(const std::string &buffer, std::string &error)
       return (false);
     }
   return (true);
-}
-
-bool		Map::readMap(std::istream &in, std::string &error)
-{
-  std::string	buffer = "";
-  bool		ret = true;
-
-  std::getline(in, buffer);
-  while ((ret = getLine(buffer, error)) && in.eof() != true)
-    std::getline(in, buffer);
-  if (ret == true && _map.size() != _sizeX)
-    {
-      std::stringstream		ss;
-
-      ss << "Error: Map must have " << _sizeX << " line" << std::endl;
-      ss << "       Instead there are " << _map.size() << " line" << std::endl;
-      ss >> error;
-      ret = false;
-    }
-  return (ret);
-}
-
-bool			Map::checkLine(const std::string &str, std::string &error)
-{
-  unsigned int		charIdx = 0;
-  unsigned int		countNb = 0;
-
-  while (str[charIdx] != '\0')
-    {
-      while (isBlank(str[charIdx]))
-	charIdx++;
-      countNb++;
-      if (isDigit(str[charIdx]) != true)
-	{
-	  error = "Error: Unexpected char in the map";
-	  return (false);
-	}
-      while (isDigit(str[charIdx]))
-	charIdx++;
-    }
-  if (countNb != _sizeY)
-    {
-      std::stringstream		ss;
-
-      ss << "Error: Map must have " << _sizeY << " columns" << std::endl;
-      ss << "       Instead there are " << countNb << " columns" << std::endl;
-      ss >> error;
-      return (false);
-    }
-  return (true);
-}
-
-bool			Map::getLine(const std::string &str, std::string &error)
-{
-  int			ret = false;
-
-  if (isLineEmpty(str) == true)
-    return  (true);
-  if ((ret = checkLine(str, error)) == true)
-    {
-      std::stringstream	ss(str);
-      int			nb;
-      std::vector<int>	line;
-      unsigned int		countNb = _sizeY;
-      
-      while (countNb > 0)
-	{
-	  ss >> nb;
-	  line.push_back(nb);
-	  countNb--;
-	}
-      _map.push_back(line);
-    }
-  return (ret);
 }
 
 void					Map::showMap(void) const
